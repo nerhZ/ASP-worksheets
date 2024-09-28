@@ -1,0 +1,4 @@
+# Following gitignore statements are to ignore compiled executables accidentally
+*
+!/**/
+!*.* 
