@@ -8,11 +8,15 @@ int Tile::getState(){
     return state;
 }
 
-void Tile::setState(int val){
-    state = val;
+bool Tile::setState(int val){
+    if (state == 0){
+        state = val;
+        return true;
+    }
+    return false;
 }
 
-char Tile::getStateStr(){
+char Tile::getStateChar(){
     switch(state){
         case 0:
             return ' ';

@@ -1,24 +1,50 @@
 #include "tile.hpp"
+#include "board.hpp"
 #include <iostream>
+#include <string>
+#include <algorithm>
+#include <map>
 
-void outputBoard(Tile* tiles){
-    std::cout << tiles[0].getStateStr() << " | " << tiles[1].getStateStr() << " | " << tiles[2].getStateStr() << "\n";
-    std::cout << tiles[3].getStateStr() << " | " << tiles[4].getStateStr() << " | " << tiles[5].getStateStr() << "\n";
-    std::cout << tiles[6].getStateStr() << " | " << tiles[7].getStateStr() << " | " << tiles[8].getStateStr() << "\n";
-};
+std::string validTiles[9] = {"A1", "A2", "A3", "B1", "B2", "B3", "C1", "C2", "C3"};
+
+bool validateTile(std::string chosenTile){
+    for(std::string tile : validTiles){
+        // std::cout << tile << " " << chosenTile << std::endl;
+        if (chosenTile == tile){
+            return true;
+        }
+    }
+    return false;
+}
 
 int main(){
-    // Create an array of tiles - require 9 to make a tic tac toe board
-    Tile tiles[9];
-
-    Tile* tilesPtr = tiles;
+    // Create a map of tiles for the board
+    std::map<std::string, Tile> tiles;
+    for (std::string tile : validTiles){
+        tiles[tile] = Tile();
+    }
+    // Initialise the playing board
+    Board board;
 
     bool playing = true;
     while (playing){
-        outputBoard(tilesPtr);
-        playing = false;
-    }
+        board.outputBoard(tiles);
 
+        std::string chosenTile;
+
+        std::cout << "Please enter a tile" << std::endl;
+        std::cin >> chosenTile; 
+
+        // Converts input to uppercase
+        transform(chosenTile.begin(), chosenTile.end(), chosenTile.begin(), ::toupper);
+
+        if (!validateTile(chosenTile)) continue;
+        bool success = tiles[chosenTile].setState(board.takeTurn());
+        if (!success){
+            std::cout << "This tile is already occuppied. Please try again" << std::endl;
+        }
+        board.flipTurnFlag();
+    }
 
     return 0;
 };
