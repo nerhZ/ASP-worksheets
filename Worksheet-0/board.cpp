@@ -9,15 +9,17 @@ Board::Board(bool val){
 
 // Function to print the state of the board
 void Board::outputBoard(std::map<std::string, Tile>& tiles){
-    std::cout << tiles["A1"].getStateChar() << " | " << tiles["A2"].getStateChar() << " | " << tiles["A3"].getStateChar() << std::endl;
-    std::cout << tiles["B1"].getStateChar() << " | " << tiles["B2"].getStateChar() << " | " << tiles["B3"].getStateChar() << std::endl;
-    std::cout << tiles["C1"].getStateChar() << " | " << tiles["C2"].getStateChar() << " | " << tiles["C3"].getStateChar() << std::endl;
+    std::cout << "  A   B   C" << std::endl; 
+    std::cout << "1 " << tiles["A1"].getStateChar() << " | " << tiles["A2"].getStateChar() << " | " << tiles["A3"].getStateChar() << std::endl;
+    std::cout << "2 " << tiles["B1"].getStateChar() << " | " << tiles["B2"].getStateChar() << " | " << tiles["B3"].getStateChar() << std::endl;
+    std::cout << "3 " << tiles["C1"].getStateChar() << " | " << tiles["C2"].getStateChar() << " | " << tiles["C3"].getStateChar() << std::endl;
 };
 
 bool Board::getTurn(){
     return turnFlag;
 }
 
+// Gets the current player's number based on the turnFlag
 int Board::getPlayer(){
     bool turn = getTurn();
 
@@ -39,6 +41,7 @@ void Board::flipTurnFlag(){
 int Board::checkWin(std::map<std::string, Tile>& tiles){
     const int player = getPlayer();
     for (auto& row : winConditions){
+        // If marked ticks up to 3 then the player matches 3 in a row.
         int marked = 0;
         for (auto& elem : row){
             if (tiles[elem].getState() == player) marked++;
@@ -46,6 +49,7 @@ int Board::checkWin(std::map<std::string, Tile>& tiles){
         if (marked == 3) return 1;
     }
 
+    // If every tile is taken and no winner is found then return 2 for a draw.
     int drawCounter = 0;
     for (auto const& [key, val] : tiles){
         if (tiles[key].getState() != 0) drawCounter++;
