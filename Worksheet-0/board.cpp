@@ -18,19 +18,40 @@ bool Board::getTurn(){
     return turnFlag;
 }
 
-int Board::takeTurn(){
+int Board::getPlayer(){
     bool turn = getTurn();
 
-    int chosenTurn;
+    int player;
     if (turn){
-        chosenTurn = 1;
+        player = 1;
     } else {
-        chosenTurn = 2;
+        player = 2;
     }
 
-    return chosenTurn;
+    return player;
 };
 
 void Board::flipTurnFlag(){
     turnFlag = !turnFlag;
+}
+
+// Must return an integer due to 3 states rather than 2. 0 = continue, 1 = winner, 2 = draw.
+int Board::checkWin(std::map<std::string, Tile>& tiles){
+    const int player = getPlayer();
+    for (auto& row : winConditions){
+        int marked = 0;
+        for (auto& elem : row){
+            if (tiles[elem].getState() == player) marked++;
+        }
+        if (marked == 3) return 1;
+    }
+
+    int drawCounter = 0;
+    for (auto const& [key, val] : tiles){
+        if (tiles[key].getState() != 0) drawCounter++;
+    }
+
+    if (drawCounter == 9) return 2;
+
+    return 0;
 }

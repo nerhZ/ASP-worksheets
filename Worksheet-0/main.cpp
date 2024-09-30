@@ -26,8 +26,8 @@ int main(){
     // Initialise the playing board
     Board board;
 
-    bool playing = true;
-    while (playing){
+    // Logic for playing the game
+    while (true){
         board.outputBoard(tiles);
 
         std::string chosenTile;
@@ -39,9 +39,17 @@ int main(){
         transform(chosenTile.begin(), chosenTile.end(), chosenTile.begin(), ::toupper);
 
         if (!validateTile(chosenTile)) continue;
-        bool success = tiles[chosenTile].setState(board.takeTurn());
+        bool success = tiles[chosenTile].setState(board.getPlayer());
         if (!success){
             std::cout << "This tile is already occuppied. Please try again" << std::endl;
+        }
+        int winCheck = board.checkWin(tiles);
+        if ( winCheck == 1){
+            std::cout << "Player " << board.getPlayer() << " has won!" << std::endl;
+            break;
+        } else if ( winCheck == 2){
+            std::cout << "No tiles remaining. Match has concluded in a draw." << std::endl;
+            break;
         }
         board.flipTurnFlag();
     }
