@@ -10,9 +10,9 @@ Board::Board(bool val){
 // Function to print the state of the board
 void Board::outputBoard(std::map<std::string, Tile>& tiles){
     std::cout << "  A   B   C" << std::endl; 
-    std::cout << "1 " << tiles["A1"].getStateChar() << " | " << tiles["A2"].getStateChar() << " | " << tiles["A3"].getStateChar() << std::endl;
-    std::cout << "2 " << tiles["B1"].getStateChar() << " | " << tiles["B2"].getStateChar() << " | " << tiles["B3"].getStateChar() << std::endl;
-    std::cout << "3 " << tiles["C1"].getStateChar() << " | " << tiles["C2"].getStateChar() << " | " << tiles["C3"].getStateChar() << std::endl;
+    std::cout << "1 " << tiles["A1"].getStateChar() << " | " << tiles["B1"].getStateChar() << " | " << tiles["C1"].getStateChar() << std::endl;
+    std::cout << "2 " << tiles["A2"].getStateChar() << " | " << tiles["B2"].getStateChar() << " | " << tiles["C2"].getStateChar() << std::endl;
+    std::cout << "3 " << tiles["A3"].getStateChar() << " | " << tiles["B3"].getStateChar() << " | " << tiles["C3"].getStateChar() << std::endl;
 };
 
 bool Board::getTurn(){
