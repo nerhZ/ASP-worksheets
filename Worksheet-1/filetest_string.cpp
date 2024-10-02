@@ -15,6 +15,7 @@ int main(){
     }
     s.setChar(1,'E');
     s.print();
+    
 }
 
 // Original test suite I used

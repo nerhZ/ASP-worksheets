@@ -8,6 +8,7 @@
 my_string::my_string(){
     m_data = new char[1];
     m_size = strlen(m_data);
+    ref_count = new int(1);
 };
 
 // Constructor with string input
@@ -16,6 +17,7 @@ my_string::my_string(const char* input){
     m_data = new char[strlen(input) + 1];
     strcpy(m_data, input);
     m_size = strlen(m_data);
+    ref_count = new int(1);
 
     // BELOW CODE IS MY ORIGINAL IMPLEMENTATION:
     // Switched my implementation for simpler built in functions
@@ -43,12 +45,16 @@ my_string::my_string(const char* input){
 my_string::my_string(my_string const& s){
     m_data = s.m_data;
     m_size = s.m_size;
+    ref_count = s.ref_count;
+    (*ref_count)++;
 };
 
 // Assignment operator - by reference, not a deep copy
 my_string& my_string::operator= (my_string const& s){
     m_data = s.m_data;
     m_size = s.m_size;
+    ref_count = s.ref_count;
+    (*ref_count)++;
     return *this;
 };
 
@@ -72,7 +78,15 @@ void my_string::setChar(const int& i, const char& c){
 };
 
 void my_string::print() const{
-    std::cout << m_data << std::endl;
+    std::cout << m_data << " [" << *ref_count << "]" << std::endl;
 };
 
-// my_string::~my_string();
+// Destructor, deletes the string data and the reference count 
+// (if it is the last reference) or just decrements the reference counter
+my_string::~my_string(){
+    (*ref_count)--;
+    if (*ref_count == 0){
+        delete []m_data;
+        delete ref_count;
+    }
+}

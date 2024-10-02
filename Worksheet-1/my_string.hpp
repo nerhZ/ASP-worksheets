@@ -8,7 +8,7 @@ class my_string {
 
         my_string(my_string const& s);
         my_string& operator= (my_string const& s);
-        // ~my_string();
+        ~my_string();
 
         char getChar(const int& i) const;
         void setChar(const int& i, const char& c);
@@ -18,4 +18,5 @@ class my_string {
         char* m_data;
         // Stores the string size/length
         size_t m_size = 0;
+        int* ref_count;
 };
