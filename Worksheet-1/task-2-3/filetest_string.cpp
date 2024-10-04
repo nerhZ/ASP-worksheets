@@ -2,20 +2,21 @@
 
 // Test suite from the worksheets
 int main(){
-    my_string s("Hello world");
-    s.print();
     {
-    my_string t = s;
+        my_string s("Hello world");
+        s.print();
+        {
+            my_string t = s;
 
-    s.print();
-    t.print();
-    std::cout << s.getChar(1) << std::endl;
-    s.print();
-    t.print();
+            s.print();
+            t.print();
+            std::cout << s.getChar(1) << std::endl;
+            s.print();
+            t.print();
+        }
+        s.setChar(1,'E');
+        s.print();
     }
-    s.setChar(1,'E');
-    s.print();
-    
 }
 
 // Original test suite I used
