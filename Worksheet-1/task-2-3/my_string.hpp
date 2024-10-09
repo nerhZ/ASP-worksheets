@@ -18,5 +18,5 @@ class my_string {
         char* m_data;
         // Stores the string size/length
         size_t m_size = 0;
-        int* ref_count;
+        size_t* ref_count;
 };

@@ -12,10 +12,9 @@ my_string::my_string(){
 
 // Constructor with string input
 my_string::my_string(const char* input){
-    
-    m_data = new char[strlen(input) + 1];
+    m_size = strlen(input) - 1; // Removes null terminator due to storage of string size (unnecessary character)
+    m_data = new char[m_size];
     strcpy(m_data, input);
-    m_size = strlen(m_data);
 
     // BELOW CODE IS MY ORIGINAL IMPLEMENTATION:
     // Switched my implementation for simpler built in functions
@@ -47,14 +46,16 @@ my_string::my_string(my_string const& s){
 
 // Assignment operator - by reference, not a deep copy
 my_string& my_string::operator= (my_string const& s){
-    m_data = s.m_data;
-    m_size = s.m_size;
+    if (this != &s){
+        m_data = s.m_data;
+        m_size = s.m_size;
+    }
     return *this;
 };
 
 // Get a character from the string at a given index
 char my_string::getChar(const int& i) const{
-    if (m_size < 0 || i > m_size){
+    if (i < 0 || i >= m_size){
         // std::cout << "String is empty" << std::endl;
         // return '\0';
         throw std::invalid_argument("Index out of bounds for string");
