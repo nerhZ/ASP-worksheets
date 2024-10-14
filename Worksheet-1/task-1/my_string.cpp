@@ -6,7 +6,7 @@
 
 // Default constructor
 my_string::my_string(){
-    m_data = new char[1];
+    m_data = nullptr;
     m_size = strlen(m_data);
 };
 
