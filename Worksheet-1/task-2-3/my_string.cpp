@@ -8,7 +8,7 @@
 my_string::my_string(){
     m_data = nullptr;
     m_size = 0;
-    ref_count = new size_t(1);
+    m_refCount = new size_t(1);
 };
 
 // Constructor with string input
@@ -16,7 +16,7 @@ my_string::my_string(const char* input){
     m_size = strlen(input) - 1; // Removes null terminator due to storage of string size (unnecessary character)
     m_data = new char[m_size];
     strcpy(m_data, input);
-    ref_count = new size_t(1);
+    m_refCount = new size_t(1);
 
     // BELOW CODE IS MY ORIGINAL IMPLEMENTATION:
     // Switched my implementation for simpler built in functions
@@ -44,8 +44,8 @@ my_string::my_string(const char* input){
 my_string::my_string(my_string const& s){
     m_data = s.m_data;
     m_size = s.m_size;
-    ref_count = s.ref_count;
-    (*ref_count)++;
+    m_refCount = s.m_refCount;
+    (*m_refCount)++;
 };
 
 // Assignment operator - by reference, not a deep copy
@@ -53,8 +53,8 @@ my_string& my_string::operator= (my_string const& s){
     if (this != &s){
         m_data = s.m_data;
         m_size = s.m_size;
-        ref_count = s.ref_count;
-        (*ref_count)++;
+        m_refCount = s.m_refCount;
+        (*m_refCount)++;
     }
     return *this;
 };
@@ -77,18 +77,18 @@ void my_string::setChar(const int& i, const char& c){
 };
 
 void my_string::print() const{
-    std::cout << m_data << " [" << *ref_count << "]" << std::endl;
+    std::cout << m_data << " [" << *m_refCount << "]" << std::endl;
 };
 
 // Destructor, deletes the string data and the reference count 
 // (if it is the last reference) or just decrements the reference counter
 my_string::~my_string(){
-    (*ref_count)--;
-    if (*ref_count == 0){
+    (*m_refCount)--;
+    if (*m_refCount == 0){
         delete []m_data;
-        delete ref_count;
-        std::cout << "Destructor called: m_data and ref_count fully deleted" << std::endl;
+        delete m_refCount;
+        std::cout << "Destructor called: m_data and m_refCount fully deleted" << std::endl;
     } else {
-        std::cout << "Destructor called: ref_count decremented to " << *ref_count << std::endl;
+        std::cout << "Destructor called: m_refCount decremented to " << *m_refCount << std::endl;
     }
 }
