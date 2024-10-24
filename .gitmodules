@@ -1,0 +1,6 @@
+[submodule "Worksheet-2/task-1-2/simpletest"]
+	path = Worksheet-2/task-1-2/simpletest
+	url = https://github.com/kudaba/simpletest
+[submodule "Worksheet-2/task-2/simpletest"]
+	path = Worksheet-2/task-2/simpletest
+	url = https://github.com/kudaba/simpletest
