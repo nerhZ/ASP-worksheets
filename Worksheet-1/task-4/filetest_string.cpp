@@ -1,7 +1,6 @@
 #include "my_string.hpp"
 #include "reference_counter.hpp"
 
-// Test suite from the worksheets
 int main(){
     {
         std::cout << "Testing reference counter with my_string" << std::endl;
