@@ -13,7 +13,7 @@ int main(){
             std::cout << test.returnRefCount() << std::endl;
         }
         std::cout << test.returnRefCount() << std::endl;
-        ref_counter<my_string> copied_string = (test);
+        ref_counter<my_string> copied_string = test;
         std::cout << test.returnRefCount() << std::endl;
     }
     {

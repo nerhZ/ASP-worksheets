@@ -17,6 +17,4 @@ class my_string {
     private:
         // Stores the string data
         char* m_data;
-        // Stores the string size/length
-        size_t m_size = 0;
 };
