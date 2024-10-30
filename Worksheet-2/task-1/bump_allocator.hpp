@@ -9,14 +9,14 @@ class bump_allocator {
         template <typename T>
         T* alloc(T numObjects){
             // Get the current address of the memory block
-            char* curAdr = m_next;
+            size_t curAdr = reinterpret_cast<size_t>(m_next);
 
             // Allocate memory for the object based on size of T and the number of objects
             size_t sizeBytes = sizeof(T) * numObjects;
 
             // Calculate the alignment offset & clear the lower bits
-            char* alignedAdr = reinterpret_cast<char*>((reinterpret_cast<size_t>(curAdr) + alignof(T) - 1) & ~(alignof(T) - 1));
-            size_t alignmentOffset = reinterpret_cast<size_t>(alignedAdr) - reinterpret_cast<size_t>(curAdr);
+            size_t alignedAdr = curAdr + (alignof(T) - 1) & ~(alignof(T) - 1);
+            size_t alignmentOffset = alignedAdr - curAdr;
 
             // Check if there is enough memory to allocate after alignment
             if (sizeBytes + alignmentOffset + m_sizeAllocated > m_size) {
@@ -26,12 +26,12 @@ class bump_allocator {
 
             m_sizeAllocated += sizeBytes + alignmentOffset;
             m_allocCounter++;
-            m_next = alignedAdr + sizeBytes;
+            m_next += alignmentOffset + sizeBytes;
             
             // Print the memory addresses of the next and current memory block to compare the difference    
-            std::cout << static_cast<void*>(m_next) << " " << static_cast<void*>(curAdr) << std::endl;
+            // std::cout << static_cast<void*>(m_next) << " " << static_cast<void*>(curAdr) << std::endl;
             // Print out the number of bytes difference between each address pointer by casting to an integer
-            std::cout << "Difference in bytes between the memory addresses is " << static_cast<size_t>(m_next - curAdr) << std::endl;
+            // std::cout << "Difference in bytes between the memory addresses is " << static_cast<size_t>(m_next - curAdr) << std::endl;
 
             // Return the current address of the memory block
             return reinterpret_cast<T*>(curAdr);

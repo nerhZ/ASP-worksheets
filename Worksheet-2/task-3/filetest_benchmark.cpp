@@ -4,26 +4,18 @@
 
 int main(){
     double down_timeTaken = benchmark([](){
-        bump_down_allocator bump(10024);
-        for (int i = 0; i < 1000; i++){
+        bump_down_allocator bump(1000000);
+        for (int i = 0; i < 100000; i++){
             bump.alloc<char>(1);
             bump.alloc<int>(1);
-        }
-        for (int i = 0; i < 1000; i++){
-            bump.dealloc();
-            bump.dealloc();
         }
     });
-
+    
     double up_timeTaken = benchmark([](){
-        bump_allocator bump(10024);
-        for (int i = 0; i < 1000; i++){
+        bump_allocator bump(1000000);
+        for (int i = 0; i < 100000; i++){
             bump.alloc<char>(1);
             bump.alloc<int>(1);
-        }
-        for (int i = 0; i < 1000; i++){
-            bump.dealloc();
-            bump.dealloc();
         }
     });
 
