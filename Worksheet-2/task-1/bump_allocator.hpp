@@ -14,7 +14,7 @@ class bump_allocator {
             // Allocate memory for the object based on size of T and the number of objects
             size_t sizeBytes = sizeof(T) * numObjects;
 
-            // Calculate the alignment offset & clear the lower bits
+            // Calculate the alignment offset & clear the lower bits, rounding up to the nearest multiple of the alignment
             size_t alignedAdr = curAdr + (alignof(T) - 1) & ~(alignof(T) - 1);
             size_t alignmentOffset = alignedAdr - curAdr;
 
@@ -33,8 +33,8 @@ class bump_allocator {
             // Print out the number of bytes difference between each address pointer by casting to an integer
             // std::cout << "Difference in bytes between the memory addresses is " << static_cast<size_t>(m_next - curAdr) << std::endl;
 
-            // Return the current address of the memory block
-            return reinterpret_cast<T*>(curAdr);
+            // Return the aligned address before sizeBytes is added (points to start of newly allocated memory after alignment)
+            return reinterpret_cast<T*>(alignedAdr);
         }
         size_t getAllocCounter();
         void dealloc();
