@@ -1,4 +1,2 @@
-# Following gitignore statements are to ignore compiled executables accidentally
-*
-!/**/
-!*.* 
+/bin
+/compile_commands.txt
