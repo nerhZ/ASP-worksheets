@@ -8,26 +8,28 @@ int main(){
     char* a = bump.alloc<char>(1);
     *a = 'a';
 
-    int* x = bump.alloc<int>(1);
-    *x = 2;
+    char* b = bump.alloc<char>(1);
+    *b = 'b';
 
-    // *x.dealloc();
+    int* c = bump.alloc<int>(1);
+    *c = 10;
 
-    char* y = bump.alloc<char>(1);
-    *y = 'a';
+    std::cout << "a address: " << static_cast<void*>(a) << std::endl;
+    std::cout << "a value: " << *a << std::endl;
+    std::cout << "b address: " << static_cast<void*>(b) << std::endl;
+    std::cout << "b value: " << *b << std::endl;
+    std::cout << "c address: " << static_cast<void*>(c) << std::endl;
+    std::cout << "c value: " << *c << std::endl;
 
-    long* b = bump.alloc<long>(1);
-    *b = 1234123123;
+    bump.dealloc();
+    bump.dealloc();
+    bump.dealloc();
 
-    // char* z = bump.alloc<char>(3);
-    // strcpy(z, "abc");
+    int* d = bump.alloc<int>(1);
+    *d = 20;
 
-    int* w = bump.alloc<int>(1);
-    *w = 923;
+    std::cout << "d address: " << static_cast<void*>(d) << std::endl;
+    std::cout << "d value: " << *d << std::endl;
 
-    std::cout << "x: " << *x << std::endl;
-    std::cout << "y: " << *y << std::endl;
-    // std::cout << "z: " << *z << *(z+1) << *(z+2) << std::endl;
-    std::cout << "w: " << *w << std::endl;
     return 0;
 }

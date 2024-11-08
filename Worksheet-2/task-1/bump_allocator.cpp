@@ -17,6 +17,7 @@ void bump_allocator::dealloc(){
         m_next -= m_sizeAllocated;
         // Set the memory from the start pointer to the size allocated to 0
         std::memset(reinterpret_cast<void*>(m_start), 0, m_sizeAllocated);
+        std::cout << "m_allocCounter reached 0, memory block has been reset" << std::endl;
     }
 }
 

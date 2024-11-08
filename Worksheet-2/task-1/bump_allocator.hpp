@@ -29,9 +29,9 @@ class bump_allocator {
             m_next += alignmentOffset + sizeBytes;
             
             // Print the memory addresses of the next and current memory block to compare the difference    
-            // std::cout << static_cast<void*>(m_next) << " " << static_cast<void*>(curAdr) << std::endl;
+            // std::cout << static_cast<void*>(m_next) << " " << reinterpret_cast<void*>(curAdr) << std::endl;
             // Print out the number of bytes difference between each address pointer by casting to an integer
-            // std::cout << "Difference in bytes between the memory addresses is " << static_cast<size_t>(m_next - curAdr) << std::endl;
+            // std::cout << "Difference in bytes (including alignment) between the memory addresses is " << reinterpret_cast<size_t>(m_next) - curAdr << std::endl;
 
             // Return the aligned address before sizeBytes is added (points to start of newly allocated memory after alignment)
             return reinterpret_cast<T*>(alignedAdr);
