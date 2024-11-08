@@ -297,9 +297,7 @@ double benchmark(Func& func, uint iterations,  Args&&... args) {
 }
 ```
 
-I utilised the benchmark function with the `filetest_benchmark.cpp` file. This can be viewed in the `task-3` subfolder of `Worksheet-2`.
-
-#### No Optimisations
+I utilised the benchmark function with void functions found in the `filetest_benchmark.cpp` file. This can be viewed in the `task-3` subfolder of `Worksheet-2`. The tabled results were resulting from compiling with no optimisation flags.
 
 | Benchmark                      | Bump Up      | Bump Down    |
 | ------------------------------ | ------------ | ------------ |
