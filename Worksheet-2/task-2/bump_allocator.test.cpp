@@ -4,7 +4,6 @@
 
 char const * groups[] = {
     "BumpUp",
-    "BumpDown"
 };
 
 DEFINE_TEST_G(TestAllocationOverLimitReturnsNullptr, BumpUp){
@@ -33,7 +32,6 @@ DEFINE_TEST_GF(TestAllocationForCharis1Byte, BumpUp, BumpUpFixture){
     TEST_MESSAGE((reinterpret_cast<char*>(b) - reinterpret_cast<char*>(a)) == sizeof(char), "Difference between the memory addresses should be 1 byte for char!");
 }
 
-// NEEDS FIXING - Alignment is not correct
 DEFINE_TEST_GF(TestAlignmentForIntAfterCharIs3Bytes, BumpUp, BumpUpFixture){
     char* a = m_bumpAllocator->alloc<char>(1);
     int* b = m_bumpAllocator->alloc<int>(1);
@@ -42,7 +40,6 @@ DEFINE_TEST_GF(TestAlignmentForIntAfterCharIs3Bytes, BumpUp, BumpUpFixture){
     TEST_MESSAGE((int(c - a) -1) == 7, "Alignment should be equal to 3 bytes if assigning an integer after a char!");
 }
 
-// Also need to figure out how to check for free memory
 DEFINE_TEST_GF(TestAllocatorFreesMemoryWhenAllAllocationsDeallocated, BumpUp, BumpUpFixture){
     int* a = m_bumpAllocator->alloc<int>(1);
     int* b = m_bumpAllocator->alloc<int>(1);
