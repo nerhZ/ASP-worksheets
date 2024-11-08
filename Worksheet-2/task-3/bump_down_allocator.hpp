@@ -16,8 +16,6 @@ class bump_down_allocator {
 
             // Calculate alignment offset by rounding down to the nearest multiple of the alignment
             size_t alignedAdr = curAdr & ~(alignof(T) - 1);
-            // size_t alignmentOffset = curAdr - alignedAdr;
-            // std::cout << "alignmentOffset is " << alignmentOffset << std::endl;
 
             // Check if there is enough memory to allocate after alignment
             if ((alignedAdr - sizeBytes) < reinterpret_cast<size_t>(m_start)) {
@@ -25,9 +23,7 @@ class bump_down_allocator {
                 return nullptr;
             }
 
-            // m_sizeAllocated += sizeBytes + alignmentOffset;
             m_allocCounter++;
-            
             m_next -= sizeBytes + (curAdr - alignedAdr);
             
             // Print the memory addresses of the next and current memory block to compare the difference    

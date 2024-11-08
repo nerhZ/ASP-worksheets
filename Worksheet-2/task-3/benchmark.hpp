@@ -2,13 +2,15 @@
 #include <chrono>
 #include <iostream>
 
-template<typename Func, typename... Args>
-double benchmark(Func func, Args... args) {
-    auto startTime = std::chrono::high_resolution_clock::now();
+template <typename Func, typename... Args>
+double benchmark(Func& func, uint iterations,  Args&&... args) {
+    auto start = std::chrono::high_resolution_clock::now();
 
-    func(args...);
-
-    auto endTime = std::chrono::high_resolution_clock::now();
-
-     return std::chrono::duration<double, std::milli>(endTime - startTime).count();
+    for (int i = 0; i < iterations; i++){
+        func(std::forward<Args>(args)...);
+    }
+    
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> duration = end - start;
+    return duration.count()/iterations;
 }

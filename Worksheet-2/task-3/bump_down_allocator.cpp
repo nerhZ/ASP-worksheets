@@ -4,14 +4,12 @@
 #include <iostream>
 
 // Constructor for the bump allocator - takes in the size of the memory block and allocates memory
-
 bump_down_allocator::bump_down_allocator(size_t size) 
     : m_size(size), m_allocCounter(0) {
     // Allocate memory for the bump allocator and set to the start of the memory block
     m_start = new char[size];
 
     // set the next pointer to the end of the memory block
-
     m_next = m_start + (size - 1);
 }
 
