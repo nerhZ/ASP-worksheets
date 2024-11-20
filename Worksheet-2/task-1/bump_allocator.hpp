@@ -15,7 +15,7 @@ class bump_allocator {
             size_t sizeBytes = sizeof(T) * numObjects;
 
             // Calculate the alignment offset & clear the lower bits, rounding up to the nearest multiple of the alignment
-            size_t alignedAdr = curAdr + (alignof(T) - 1) & ~(alignof(T) - 1);
+            size_t alignedAdr = (curAdr + (alignof(T) - 1)) & ~(alignof(T) - 1);
             size_t alignmentOffset = alignedAdr - curAdr;
 
             // Check if there is enough memory to allocate after alignment
