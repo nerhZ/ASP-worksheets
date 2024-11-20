@@ -17,7 +17,7 @@ private:
     size_t m_sizeAllocated;
 ```
 
-- `m_next` and `m_start` are memory pointers, represented as `char*` types due to a char representing 1 byte in memory and pointer arithmetic being supported (unlike `void*`). These are used to keep track of the start of memory and also where the next position to allocate objects is located.
+- `m_next` and `m_start` are memory pointers, represented as `char*` types due to a char representing 1 byte in memory and pointer arithmetic being supported (unlike `void*`). These pointers are used to keep track of the start of memory and also where the next position to allocate objects is located.
 - `m_allocCounter` is stored as a `size_t` (due to being an unsigned integer type) and stores the number of times something has been allocated to the bump allocator.
 - `m_size` and `m_sizeAllocated` are also of type `size_t`, as `size_t` allows storage of the largest possible object the system can handle (if such an instance is necessary).
 
@@ -47,7 +47,7 @@ bump_allocator::bump_allocator(size_t size)
 
 As for allocating objects onto the bump allocator, it requires allocating a number of objects (`numObjects`) - for example 1 int or 1 char. The number of bytes required to store said type are then calculated based on the `sizeof(T) * numObjects` (with `sizeof(T)` returning the number of bytes to store one variable of said object).
 
-The address must also be aligned, and is done so using `curAdr + (alignof(T) -1) & ~(alignof(T) -1)` which rounds up to the nearest multiple of the alignment and clears the lower bits. The `alignmentOffset` is then calculated by minusing the aligned address from the original address (to be used for later calculations).
+The address must also be aligned, and is done so using `curAdr + (alignof(T) -1) & ~(alignof(T) -1)` which rounds up to the nearest multiple of the alignment and clears the lower bits, which ensures the address is aligned to the requirement of type `T`. The `alignmentOffset` is then calculated by minusing the aligned address from the original address (to be used for later calculations).
 
 After the address is aligned I check if there is enough space left in the bump allocator to allocate the required bytes. If there isn't then return a `nullptr`, otherwise increase the value of `m_sizeAllocated` accordingly, as well as increment the `m_allocCounter` and set the `m_next` pointer to the next free space on the allocator (`alignmentOffet + sizeBytes`). Then return the aligned address (`alignedAdr`) to point to where the allocated object is (just after alignment).
 
@@ -79,7 +79,7 @@ After the address is aligned I check if there is enough space left in the bump a
         }
 ```
 
-Deallocating objects from the bump allocator can only be done when the `m_allocCounter` is equal to zero, so when dealloc is called it simply decrements `m_allocCounter`, unless the counter reaches zero which leads to the `m_next` pointer being reset to `m_start` and the allocated memory is zeroed out.
+Deallocating objects from the bump allocator can only be done when the `m_allocCounter` is equal to zero, so when dealloc is called it simply decrements `m_allocCounter`, unless the counter reaches zero which leads to the `m_next` pointer being reset to `m_start` and the allocated memory zeroed out.
 
 ```c++
 void bump_allocator::dealloc(){
@@ -93,7 +93,7 @@ void bump_allocator::dealloc(){
 }
 ```
 
-`delete()` only gets called during the destructor, as the deallocate function only resets the memory - it may still be reused. `m_start` is set to `nullptr`
+`delete()` only gets called during the destructor, as the deallocate function only resets the memory - it may still be reused. `m_start` is set to `nullptr`, ensuring the pointer no longer points to deallocated memory.
 
 ```c++
 bump_allocator::~bump_allocator(){
@@ -219,7 +219,7 @@ The goal of task 3 was to implement a bump down version of the allocator, and al
 
 ### Bump Down Allocator
 
-In order to implement the bump down allocator, it was mostly the same (if not slightly simpler), To begin with, I removed `m_sizeAllocated`, as it will no longer be necessary for my bump down implementation. The rest of the class interface is identical, but the implementation does differ.
+In order to implement the bump down allocator, it was mostly the same (if not slightly simpler), To begin with, I removed `m_sizeAllocated`, as it will no longer be necessary for my bump down implementation due to not being required for checking available size. The rest of the class interface is identical, but the implementation does differ.
 
 First of all, in the constructor `m_next` is now set to the end of the assigned memory block, rather than the start.
 
@@ -234,9 +234,9 @@ bump_down_allocator::bump_down_allocator(size_t size)
 }
 ```
 
-As for allocation, there are a few differences. The first comes in the form of alignment, where it is a simpler calculation to round down to the nearest multiple of alignment. The checking for available memory is different (since we're bumping down) and we also decrement the `m_next` pointer with the size of bytes to allocate & aligned bytes.
+As for allocation, there are a few differences. The first comes in the form of alignment, where it is a simpler calculation to round down to the nearest multiple of alignment. The checking for available memory is different (since we're bumping down) and we also decrement the `m_next` pointer with the size of bytes to allocate (`sizeBytes`) & aligned bytes (`curAdr - alignedAdr`).
 
-Instead of returning the address before the bytes are added like in a bump up allocator we return the address after the object bytes AND alignment bytes are added. This is due to the fact that it leads to the pointer pointing to the first allocated byte, since it's decrementing rather than incrementing.
+Instead of returning the address before the bytes are added like in a bump up allocator we return the address after the object bytes AND alignment bytes are added. This is due to the fact that it leads to the pointer pointing to the first allocated byte for the object, since it's decrementing rather than incrementing.
 
 ```c++
 template <typename T>
@@ -264,7 +264,7 @@ T* alloc(T numObjects){
 }
 ```
 
-Deallocation remains almost identical, with the only difference being how the `m_next` pointer is reset when `m_allocCounter` reaches zero, being set back to the end of the allocated memory.
+Deallocation remains almost identical, with the only difference being how the `m_next` pointer is reset when `m_allocCounter` reaches zero, which is by being set back to the end of the allocated memory.
 
 ```c++
 void bump_down_allocator::dealloc(){
@@ -297,7 +297,22 @@ double benchmark(Func& func, uint iterations,  Args&&... args) {
 }
 ```
 
-I utilised the benchmark function with void functions found in the `filetest_benchmark.cpp` file. This can be viewed in the `task-3` subfolder of `Worksheet-2`. The tabled results were resulting from compiling with no optimisation flags.
+An example of how this benchmark function was used:
+
+```c++
+// Function to allocate memory for char and int types, with the number of iterations and number of objects to allocate size for
+void allocate_test_down(bump_down_allocator* bump_alloc, int iterations, int size){
+    for (int i = 0; i < iterations; i++){
+        bump_alloc->alloc<char>(size);
+        bump_alloc->alloc<int>(size);
+    }
+};
+
+// 10 benchmark iterations, with 10000 sizeof(T * 1) allocations per benchmark iteration
+double down_timeTaken = benchmark(*allocate_test_down, 10, &bump_down, 10000, 1);
+```
+
+I utilised the benchmark function with void functions found in the `filetest_benchmark.cpp` file (one example above). This can be viewed in the `task-3` subfolder of `Worksheet-2`. The tabled results were resulting from compiling with no optimisation flags.
 
 | Benchmark                      | Bump Up      | Bump Down    |
 | ------------------------------ | ------------ | ------------ |
@@ -311,4 +326,4 @@ I utilised the benchmark function with void functions found in the `filetest_ben
 
 I also ran the same benchmarks with the `-O2` and `-O3` compiler flags, and due to the optimisations of the compiler the differences between bump down & bump up were essentially removed - and either traded blows on all three benchmarks.
 
-To conclude, bump down is faster on average (keep in mind each test was averaged over 10 runs), unless an optimisation flag is used to bypass the differences.
+To conclude, bump down is faster on average (keep in mind each test was averaged over 10 runs), unless an optimisation flag is used to make up the difference.
