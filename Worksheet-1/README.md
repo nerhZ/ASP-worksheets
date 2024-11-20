@@ -6,7 +6,7 @@ This README is dedicated to worksheet 1 only, and will detail each of the four t
 
 For Task 1 I implemented my own string class utilising the interface provided. I initially set out to write it without using standard functions, but was assured that using standard functions is perfectly fine, so switched to simpler implementations - for example using `strlen()` & `strcpy()`.
 
-I added one extra variable to the class: `m_data` which is used to store the string, but I decided not to store the size of the string as I believe the minor computation time required for `strlen()` to run is worth removing the chance of storing stale data. It is important to note that during initialisation I ensure to set the character array size to `strlen(input + 1)` to ensure that `strcpy(m_data, input)` can store the null terminator at the end of the string, as `strlen()` does not include the null terminator in it's length calculation. This is shown below:
+I added one extra variable to the class: `m_data` of type `char*` which is used to store the string, but I decided not to store the size of the string as I believe the minor computation time required for `strlen()` to run is worth removing the chance of storing stale data. It is important to note that during initialisation I ensure to set the character array size to `strlen(input + 1)` to ensure that `strcpy(m_data, input)` can store the null terminator at the end of the string, as `strlen()` does not include the null terminator in it's length calculation. This is shown below:
 
 ```c++
 my_string::my_string(const char* input){
