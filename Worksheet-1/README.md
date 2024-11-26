@@ -46,7 +46,7 @@ my_string::my_string(const char* input){
     // Include + 1 to ensure strcpy has enough space to include the null terminator
     m_data = new char[strlen(input) + 1];
     strcpy(m_data, input);
-    m_refCount = new size_t(1);
+    m_refCount = new int(1);
 }
 ```
 
@@ -125,10 +125,10 @@ class ref_counter{
         // Copy constructor, copy data and increment ref_count
         ref_counter(ref_counter const& input);
         //  Return the ref_count
-        size_t returnRefCount();
+        int returnRefCount();
     private:
         // Reference count and data
-        size_t* m_refCount;
+        int* m_refCount;
         T* p_data;
 };
 ```
@@ -141,7 +141,7 @@ The two initialisers are both incredibly simple and simply set `m_refCount` and 
 // Default constructor, initialsie to nullptrs
 ref_counter(): m_refCount(nullptr), p_data(nullptr){};
 // Constructor with data, initialise ref_count to 1 and set p_data to data
-ref_counter(T* data): m_refCount(new size_t(1)), p_data(data){};
+ref_counter(T* data): m_refCount(new int(1)), p_data(data){};
 ```
 
 The copy and assignment operator are both extremely similar to the implementation that was found natively inside the `my_string` class but stores the data relating to the referenced object entirely.
