@@ -329,7 +329,7 @@ I utilised the benchmark function with void functions found in the `filetest_ben
 - Medium-sized - 5,000 allocations of 50 chars followed by 50 integers.
 - Large-sized - 2,500 allocations of 100 chars followed by 100 integers.
 
-I also ran the same benchmarks with the `-O2` and `-O3` compiler flags, and due to the optimisations of the compiler the differences between bump down & bump up were essentially removed - and either traded blows on all three benchmarks. In addition, the differences between `-O2` and `-O3` were negligible, despite `-O3` enabling a higher-level of optimisation (likely due to the simple nature of the code). To prove this the below table shows `-O2` and `-O3` on the "10,000 Small-sized Allocations" average over 10 runs benchmark.
+I also ran the same benchmarks with the `-O2` and `-O3` compiler flags. And both led to a drastic decrease in runtime, but due to the optimisations of the compiler the differences between bump down & bump up were essentially removed - and either traded blows on all three benchmarks. In addition, the differences between `-O2` and `-O3` were negligible, despite `-O3` enabling a higher-level of optimisation (likely due to the simple nature of the code). To prove this the below table shows `-O2` and `-O3` on the "10,000 Small-sized Allocations" average over 10 runs benchmark.
 
 | Optimisation Level | Bump Up      | Bump Down    |
 | ------------------ | ------------ | ------------ |
