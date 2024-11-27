@@ -18,5 +18,5 @@ class my_string {
         // Stores the string data
         char* m_data;
         // Stores the reference count
-        int* m_refCount;
+        size_t* m_refCount;
 };

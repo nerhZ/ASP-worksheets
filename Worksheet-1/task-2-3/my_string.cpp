@@ -7,7 +7,7 @@
 // Default constructor
 my_string::my_string(){
     m_data = nullptr;
-    m_refCount = new int(1);
+    m_refCount = new size_t(1);
 };
 
 // Constructor with string input
@@ -15,7 +15,7 @@ my_string::my_string(const char* input){
     // Include + 1 to ensure strcpy has enough space to include the null terminator
     m_data = new char[strlen(input) + 1];
     strcpy(m_data, input);
-    m_refCount = new int(1);
+    m_refCount = new size_t(1);
     // BELOW CODE IS MY ORIGINAL IMPLEMENTATION:
     // Switched my implementation for simpler built in functions
     // const char* inputPointer = input;

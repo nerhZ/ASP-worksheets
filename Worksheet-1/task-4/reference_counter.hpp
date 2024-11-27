@@ -6,7 +6,7 @@ class ref_counter{
         // Default constructor, initialsie to nullptrs
         ref_counter(): m_refCount(nullptr), p_data(nullptr){};
         // Constructor with data, initialise ref_count to 1 and set p_data to data
-        ref_counter(T* data): m_refCount(new int(1)), p_data(data){};
+        ref_counter(T* data): m_refCount(new size_t(1)), p_data(data){};
         // Destructor, decrement ref_count and delete data if ref_count is 0
         ~ref_counter(){
             (*m_refCount)--;
@@ -48,11 +48,11 @@ class ref_counter{
             (*m_refCount)++;
         }
         //  Return the ref_count
-        int returnRefCount(){
+        size_t returnRefCount(){
             return *m_refCount;
         }
     private:
         // Reference count and data
-        int* m_refCount;
+        size_t* m_refCount;
         T* p_data;
 };

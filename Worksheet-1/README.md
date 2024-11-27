@@ -9,6 +9,12 @@ For Task 1 I implemented my own string class utilising the interface provided. I
 I added one extra variable to the class: `m_data` of type `char*` which is used to store the string, but I decided not to store the size of the string as I believe the minor computation time required for `strlen()` to run is worth removing the chance of storing stale data. It is important to note that during initialisation I ensure to set the character array size to `strlen(input + 1)` to ensure that `strcpy(m_data, input)` can store the null terminator at the end of the string, as `strlen()` does not include the null terminator in it's length calculation. This is shown below:
 
 ```c++
+// Default constructor
+my_string::my_string(){
+    m_data = nullptr;
+};
+
+// Constructor with string input
 my_string::my_string(const char* input){
     m_data = new char[strlen(input) + 1];
     strcpy(m_data, input);
@@ -38,15 +44,21 @@ Both of these functions utilise the adress of the string to copy, so that it is 
 
 ## Task 2-3
 
-In order to add reference counting to the class I added one new private variable to the class, `m_refCount`. This variable would be used to track the current number of references to the string. In initialisation I made sure to initialise `m_refCount` in memory and set it to 1, shown below:
+In order to add reference counting to the class I added one new private variable to the class, `m_refCount`. This variable would be used to track the current number of references to the string. `m_refCount` is of `size_t` type for best practice, as it supports storing the count of the largest value possible (which could in theory be required). In initialisation I made sure to initialise `m_refCount` in memory and set it to 1, shown below:
 
 ```c++
+// Default constructor
+my_string::my_string(){
+    m_data = nullptr;
+    m_refCount = new size_t(1);
+};
+
 // Constructor with string input
 my_string::my_string(const char* input){
     // Include + 1 to ensure strcpy has enough space to include the null terminator
     m_data = new char[strlen(input) + 1];
     strcpy(m_data, input);
-    m_refCount = new int(1);
+    m_refCount = new size_t(1);
 }
 ```
 
@@ -128,7 +140,7 @@ class ref_counter{
         int returnRefCount();
     private:
         // Reference count and data
-        int* m_refCount;
+        size_t* m_refCount;
         T* p_data;
 };
 ```
@@ -141,7 +153,7 @@ The two initialisers are both incredibly simple and simply set `m_refCount` and 
 // Default constructor, initialsie to nullptrs
 ref_counter(): m_refCount(nullptr), p_data(nullptr){};
 // Constructor with data, initialise ref_count to 1 and set p_data to data
-ref_counter(T* data): m_refCount(new int(1)), p_data(data){};
+ref_counter(T* data): m_refCount(new size_t(1)), p_data(data){};
 ```
 
 The copy and assignment operator are both extremely similar to the implementation that was found natively inside the `my_string` class but stores the data relating to the referenced object entirely.
