@@ -4,6 +4,8 @@ This README is dedicated to worksheet 1 only, and will detail each of the four t
 
 ## Task 1
 
+GOAL: Implement simplified version of C++ string class.
+
 For Task 1 I implemented my own string class utilising the interface provided. I initially set out to write it without using standard functions, but was assured that using standard functions is perfectly fine, so switched to simpler implementations - for example using `strlen()` & `strcpy()`.
 
 I added one extra variable to the class: `m_data` of type `char*` which is used to store the string, but I decided not to store the size of the string as I believe the minor computation time required for `strlen()` to run is worth removing the chance of storing stale data. It is important to note that during initialisation I ensure to set the character array size to `strlen(input + 1)` to ensure that `strcpy(m_data, input)` can store the null terminator at the end of the string, as `strlen()` does not include the null terminator in it's length calculation. This is shown below:
@@ -43,6 +45,8 @@ Both of these functions utilise the adress of the string to copy, so that it is 
 ![Output of filetest_string.cpp running](./README_Images/image-1.png)
 
 ## Task 2-3
+
+GOAL: Extend string class to include reference counting, and add print statements to display when the reference counter reaches zero.
 
 In order to add reference counting to the class I added one new private variable to the class, `m_refCount`. This variable would be used to track the current number of references to the string. `m_refCount` is of `size_t` type for best practice, as it supports storing the count of the largest value possible (which could in theory be required). In initialisation I made sure to initialise `m_refCount` in memory and set it to 1, shown below:
 
@@ -117,6 +121,8 @@ When ran through the test suite it worked as expected, giving the following resu
 ![Output of filetest_string.cpp running](./README_Images/image-2.png)
 
 ## Task 4
+
+GOAL: Move reference counting to a separate template class that can be used to reference count any type.
 
 First of all, I removed reference counting from the my_string class itself by removing `m_refCount` as a private variable, and all instances where it is handled (initialised, decremented, incremented) as this would now be handled by a separate template class `ref_counter`.
 
