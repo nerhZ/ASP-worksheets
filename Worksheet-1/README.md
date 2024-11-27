@@ -83,6 +83,14 @@ my_string& my_string::operator= (my_string const& s){
 };
 ```
 
+In order to prove the reference counter implementation was working as expected, I also altered the print function to print out the current reference count when printing the contents of the string:
+
+```c++
+void my_string::print() const{
+    std::cout << m_data << " [" << *m_refCount << "]" << std::endl;
+};
+```
+
 Destructor implementation:
 
 ```c++
@@ -93,22 +101,18 @@ my_string::~my_string(){
     if (*m_refCount == 0){
         delete []m_data;
         delete m_refCount;
+        // Task 3 print statement
         std::cout << "Destructor called: m_data and m_refCount fully deleted" << std::endl;
     } else {
+        // Task 3 print statement
         std::cout << "Destructor called: m_refCount decremented to " << *m_refCount << std::endl;
     }
 }
 ```
 
-In order to prove the reference counter implementation was working as expected, I also altered the print function to print out the current reference count:
+For Task 3 the goal was to display when the reference count reached zero, so I added two print statements to the destructor that stated when `m_refCount` gets decremented and also when `m_refCount` reaches zero (visible above).
 
-```c++
-void my_string::print() const{
-    std::cout << m_data << " [" << *m_refCount << "]" << std::endl;
-};
-```
-
-When ran through the test suite it worked as expected, giving the following result - with a few print statements relating to Task 3, that state when the reference counter is decremented and when the data is fully deleted:
+When ran through the test suite it worked as expected, giving the following result, which satisfies both Task 2 and 3:
 
 ![Output of filetest_string.cpp running](./README_Images/image-2.png)
 
