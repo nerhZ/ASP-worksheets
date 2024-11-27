@@ -4,7 +4,9 @@ This README is dedicated to Worksheet 2 only, and will detail each of the three 
 
 ## Task 1
 
-The goal of Task 1 was to implement a bump allocator and it's `alloc` and `dealloc` functionality. In order to implement a bump allocator I first started with designing the interface for the class.
+GOAL: Implement a bump allocator and it's `alloc` and `dealloc` functionality.
+
+In order to implement a bump allocator I first started with designing the interface for the class.
 
 The stored private variables are as follows:
 
@@ -112,7 +114,7 @@ The test file `filetest_bump.cpp` can be found in the `task-1` folder inside `Wo
 
 ## Task 2
 
-The goal of Task 2 was to develop unit tests utilising the simpletest library for the bump up allocator implementation.
+GOAL: Develop unit tests utilising the simpletest library for the bump up allocator implementation.
 
 I implemented six unit tests, and created a test fixture, which gave me a baseline for the majority of the tests (same setup and memory allocation) unless a test required a different memory allocation. This also helped ensure my tests were consistent. I also utilised simpletest's group functionality, so all the tests were defined on the `BumpUp` group. This feature would be very useful in cases where you are testing multiple different types of objects and wish to have pass rates for each individual group.
 
@@ -218,7 +220,7 @@ Below is output to prove that all six tests passed as expected.
 
 ## Task 3
 
-The goal of task 3 was to implement a bump down version of the allocator, and also implement a benchmark `<template>` function so that the sped of the bump up allocator and bump down allocator can be compared.
+GOAL: Implement a bump down version of the allocator, and also implement a benchmark `<template>` function so that the speed of the bump up allocator and bump down allocator can be compared.
 
 ### Bump Down Allocator
 
