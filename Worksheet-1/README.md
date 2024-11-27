@@ -75,7 +75,7 @@ In order to add reference counting to the class I added one new private variable
 // Default constructor
 my_string::my_string(){
     m_data = nullptr;
-    m_refCount = new size_t(1);
+    m_refCount = new size_t(0);
 };
 
 // Constructor with string input
