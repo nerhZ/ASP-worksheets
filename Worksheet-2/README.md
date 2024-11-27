@@ -18,8 +18,8 @@ private:
 ```
 
 - `m_next` and `m_start` are memory pointers, represented as `char*` types due to a char representing 1 byte in memory and pointer arithmetic being supported (unlike `void*`). These pointers are used to keep track of the start of memory and also where the next position to allocate objects is located.
-- `m_allocCounter` is stored as a `size_t` (due to being an unsigned integer type) and stores the number of times something has been allocated to the bump allocator.
-- `m_size` and `m_sizeAllocated` are also of type `size_t`, as `size_t` allows storage of the largest possible object the system can handle (if such an instance is necessary).
+- `m_allocCounter` is stored as a `size_t` and stores the number of times something has been allocated to the bump allocator, it is best practice to use `size_t` as it is unsigned and can store the largest possible value required (if such an instance was necessary).
+- `m_size` and `m_sizeAllocated` are also of type `size_t`, as `size_t` allows storage of the largest possible object the system can handle, and we are storing size values.
 
 The public methods for the bump allocator are as follows (and will be explored below):
 
@@ -51,18 +51,21 @@ The address must also be aligned, and is done so using `curAdr + (alignof(T) -1)
 
 After the address is aligned I check if there is enough space left in the bump allocator to allocate the required bytes. If there isn't then return a `nullptr`, otherwise increase the value of `m_sizeAllocated` accordingly, as well as increment the `m_allocCounter` and set the `m_next` pointer to the next free space on the allocator (`alignmentOffet + sizeBytes`). Then return the aligned address (`alignedAdr`) to point to where the allocated object is (just after alignment).
 
+`uintptr_t` is used instead of `size_t` to store pointer addresses, as `uintptr_t` is capable of holding any pointer type, while `size_t` is not guaranteed.
+
 ```c++
         template <typename T>
         T* alloc(T numObjects){
             // Get the current address of the memory block
-            size_t curAdr = reinterpret_cast<size_t>(m_next);
+            uintptr_t curAdr = reinterpret_cast<uintptr_t>(m_next);
 
             // Allocate memory for the object based on size of T and the number of objects
             size_t sizeBytes = sizeof(T) * numObjects;
 
             // Calculate the alignment offset & clear the lower bits, rounding up to the nearest multiple of the alignment
-            size_t alignedAdr = (curAdr + (alignof(T) - 1)) & ~(alignof(T) - 1);
-            size_t alignmentOffset = alignedAdr - curAdr;
+            uintptr_t alignedAdr = (curAdr + (alignof(T) - 1)) & ~(alignof(T) - 1);
+            // Calculate the alignment offset - no chance of curAdr being less than alignedAdr, so unsigned is acceptable
+            uintptr_t alignmentOffset = alignedAdr - curAdr;
 
             // Check if there is enough memory to allocate after alignment
             if (sizeBytes + alignmentOffset + m_sizeAllocated > m_size) {
@@ -236,32 +239,32 @@ bump_down_allocator::bump_down_allocator(size_t size)
 
 As for allocation, there are a few differences. The first comes in the form of alignment, where it is a simpler calculation to round down to the nearest multiple of alignment. The checking for available memory is different (since we're bumping down) and we also decrement the `m_next` pointer with the size of bytes to allocate (`sizeBytes`) & aligned bytes (`curAdr - alignedAdr`).
 
-Instead of returning the address before the bytes are added like in a bump up allocator we return the address after the object bytes AND alignment bytes are added. This is due to the fact that it leads to the pointer pointing to the first allocated byte for the object, since it's decrementing rather than incrementing.
+Instead of returning the address before the bytes are added like in a bump up allocator we return the address after the object bytes AND alignment bytes are added. This is due to the fact that it leads to the pointer pointing to the first allocated byte for the object, since it's decrementing the `m_next` pointer rather than incrementing.
 
 ```c++
-template <typename T>
-T* alloc(T numObjects){
-    // Get the current address of the memory block
-    size_t curAdr = reinterpret_cast<size_t>(m_next);
+        template <typename T>
+        T* alloc(T numObjects){
+            // Get the current address of the memory block
+            uintptr_t curAdr = reinterpret_cast<uintptr_t>(m_next);
 
-    // Allocate memory for the object based on sizeof T and the number of objects
-    size_t sizeBytes = sizeof(T) * numObjects;
+            // Allocate memory for the object based on sizeof T and the number of objects
+            size_t sizeBytes = sizeof(T) * numObjects;
 
-    // Calculate alignment offset by rounding down to the nearest multiple of the alignment
-    size_t alignedAdr = curAdr & ~(alignof(T) - 1);
+            // Calculate aligned address by rounding down the current address to the nearest multiple of the alignment
+            uintptr_t alignedAdr = curAdr & ~(alignof(T) - 1);
 
-    // Check if there is enough memory to allocate after alignment
-    if ((alignedAdr - sizeBytes) < reinterpret_cast<size_t>(m_start)) {
-        std::cout << "Not enough memory to allocate" << std::endl;
-        return nullptr;
-    }
+            // Check if there is enough memory to allocate after alignment
+            if ((alignedAdr - sizeBytes) < reinterpret_cast<uintptr_t>(m_start)) {
+                std::cout << "Not enough memory to allocate" << std::endl;
+                return nullptr;
+            }
 
-    m_allocCounter++;
-    m_next -= sizeBytes + (curAdr - alignedAdr);
+            m_allocCounter++;
+            m_next -= sizeBytes + (curAdr - alignedAdr);
 
-    // Return the current address of the memory block
-    return reinterpret_cast<T*>(m_next);
-}
+            // Return the current address of the memory block
+            return reinterpret_cast<T*>(m_next);
+        }
 ```
 
 Deallocation remains almost identical, with the only difference being how the `m_next` pointer is reset when `m_allocCounter` reaches zero, which is by being set back to the end of the allocated memory.
@@ -316,7 +319,7 @@ I utilised the benchmark function with void functions found in the `filetest_ben
 
 | Benchmark                      | Bump Up      | Bump Down    |
 | ------------------------------ | ------------ | ------------ |
-| 10,000 Small-sized Allocations | 0.112525 ms  | 0.0974384 ms |
+| 10,000 Small-sized Allocations | 0.1125253 ms | 0.0974384 ms |
 | 5,000 Medium-sized Allocations | 0.0563795 ms | 0.0460241 ms |
 | 2,500 Large-sized Allocations  | 0.0312786 ms | 0.0230351 ms |
 
@@ -324,6 +327,11 @@ I utilised the benchmark function with void functions found in the `filetest_ben
 - Medium-sized - 5,000 allocations of 50 chars followed by 50 integers.
 - Large-sized - 2,500 allocations of 100 chars followed by 100 integers.
 
-I also ran the same benchmarks with the `-O2` and `-O3` compiler flags, and due to the optimisations of the compiler the differences between bump down & bump up were essentially removed - and either traded blows on all three benchmarks.
+I also ran the same benchmarks with the `-O2` and `-O3` compiler flags, and due to the optimisations of the compiler the differences between bump down & bump up were essentially removed - and either traded blows on all three benchmarks. In addition, the differences between `-O2` and `-O3` were negligible, despite `-O3` enabling a higher-level of optimisation (likely due to the simple nature of the code). To prove this the below table shows `-O2` and `-O3` on the "10,000 Small-sized Allocations" average over 10 runs benchmark.
 
-To conclude, bump down is faster on average (keep in mind each test was averaged over 10 runs), unless an optimisation flag is used to make up the difference.
+| Optimisation Level | Bump Up      | Bump Down    |
+| ------------------ | ------------ | ------------ |
+| O2                 | 0.0348653 ms | 0.0376574 ms |
+| O3                 | 0.0376214 ms | 0.0388838 ms |
+
+To conclude, bump down is faster on average (keep in mind each test was averaged over 10 runs), unless an optimisation flag is used, which negates their differences in running time. `-O2` would be preferable in this scenario, due to faster compile times and potentially less memory usage than `-O3`, with the fastest runtimes (negligible differences runtime changes, however).

@@ -9,14 +9,15 @@ class bump_allocator {
         template <typename T>
         T* alloc(T numObjects){
             // Get the current address of the memory block
-            size_t curAdr = reinterpret_cast<size_t>(m_next);
+            uintptr_t curAdr = reinterpret_cast<uintptr_t>(m_next);
 
             // Allocate memory for the object based on size of T and the number of objects
             size_t sizeBytes = sizeof(T) * numObjects;
 
             // Calculate the alignment offset & clear the lower bits, rounding up to the nearest multiple of the alignment
-            size_t alignedAdr = (curAdr + (alignof(T) - 1)) & ~(alignof(T) - 1);
-            size_t alignmentOffset = alignedAdr - curAdr;
+            uintptr_t alignedAdr = (curAdr + (alignof(T) - 1)) & ~(alignof(T) - 1);
+            // Calculate the alignment offset - no chance of curAdr being less than alignedAdr
+            uintptr_t alignmentOffset = alignedAdr - curAdr;
 
             // Check if there is enough memory to allocate after alignment
             if (sizeBytes + alignmentOffset + m_sizeAllocated > m_size) {
